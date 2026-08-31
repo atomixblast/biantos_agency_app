@@ -1,0 +1,190 @@
+
+<div x-data="add_bill">
+<!-- Invoice -->
+
+  <div class=" mx-auto">
+    <!-- Grid -->
+    <div class="mb-5 flex justify-between items-center">
+     
+    <div>
+        <h1 class="text-2xl text-foreground">Créer une commande</h1>
+    </div>
+    </div>
+    <!-- End Grid -->
+
+    {% comment %}
+    <div class="border border-secondary-foreground rounded-xl mt-10">
+         <div class="grid grid-cols-[1fr_1fr_1fr_70px] p-1">
+          <c-order-floating-input label="Article" class="border-r border-gray-300" />
+          <c-order-floating-input type="number" label="Qté" class="border-r border-gray-300" />
+          <c-order-floating-input type="number" label="Remise (%)" />
+          <button class="bg-primary hover:bg-primary/80 hover:cursor-pointer text-primary-foreground rounded-xl drop-shadow-xl"><span class="material-icons md-32">add</span></button>
+         </div>
+    </div>
+    {% endcomment %}
+
+    <div class="mt-10 mb-2">
+        <small class="text-base text-foreground italic">Créez votre commande en ajoutant des articles en cliquant sur le bouton en dessous puis validez votre commande</small>
+    </div>
+
+    <!-- Warning message for duplicates -->
+    <div x-show="showNotification" x-transition class="mb-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg flex items-center gap-2">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <span x-text="notificationMessage"></span>
+    </div>
+
+    <div class="mb-4">
+      <template x-for="(article, index) in orderArticles">
+        <div class="bg-card flex items-center gap-4 text-card-foreground border-b border-border p-4 rounded-md hover:bg-accent hover:border-primary duration-500 transition-all">
+            <template x-if="article.photo">
+              <img class="w-14 h-14 border object-cover border-muted-foreground rounded-lg" :src="`${location.origin}${article.photo}`" :alt="article.designation">
+            </template>
+            <template x-if="!article.photo">
+              <div class="w-14 h-14 border border-muted-foreground rounded-lg bg-primary/10 flex items-center justify-center">
+                <svg class="w-8 h-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+              </div>
+            </template>
+            <div>
+                <h4 class="text-card-foreground text-lg font-medium mb-1" x-text="article.designation"></h4>
+                <div class="flex justify-start items-center gap-2">
+                    <span class="inline-flex items-center gap-x-1.5 rounded-md px-3 bg-accent text-accent-foreground italic" x-text="'Qté : '+article.qty">x2</span>
+                    <span class="inline-flex items-center gap-x-1.5 rounded-md px-3 bg-accent text-accent-foreground italic" x-text="'Remise : '+article.discount+'%'">-250</span>
+                    <span class="inline-flex items-center gap-x-1.5 rounded-md px-3 bg-accent text-accent-foreground italic" x-text="'Total : '+article.total.toFixed(2)">5750</span>
+                </div>
+            </div>
+            <div class="ml-auto">
+              <button @click="removeArticleToOrder(index)" class="hover:cursor-pointer mr-2 text-destructive"><span class="material-icons">delete</span></button>
+              <!-- <button class="hover:cursor-pointer text-foreground"><span class="material-icons">edit</span></button> -->
+            </div>
+        </div>
+      </template>
+    </div>
+    
+
+    <div class="mb-5">
+      
+      <button  @click="mode='edit'" :class="mode=='pending' ? 'block' : 'hidden'" class="text-primary hover:text-primary/80 text-lg hover:cursor-pointer duration-500 transition-all flex items-center gap-2">
+        <span class="material-icons">add_circle</span>
+        Ajouter un article à la commande
+      </button>
+        <div class="" :class="mode=='pending' ? 'hidden' : 'block'">
+          <div class="grid grid-cols-3 mt-2 border border-foreground rounded-md">
+            <c-order-floating-input-article id="add_article_field" placeholder="Sélectionner un service" class="border-r border-gray-300" />
+            <c-order-floating-input id="add_qty_field" type="number" label="Qté" class="border-r border-gray-300" />
+            <c-order-floating-input id="add_discount_field" type="number" label="Remise (%)" />
+          </div>
+          <div class="flex justify-between mt-2">
+            <div class="flex items-center gap-2">
+              <button @click="addArticleToOrder()" class="bg-primary hover:bg-primary/80 hover:cursor-pointer text-primary-foreground py-2 px-3 flex items-center rounded-md">
+                Ajouter
+              </button>
+              <button @click="mode='pending'" class="bg-background hover:bg-secondary hover:cursor-pointer text-foreground py-2 px-3 flex items-center rounded-md">
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+
+    </div>
+
+    <div class="border-t border-foreground py-4 flex justify-between items-center gap-2">
+        <div x-show="canCreateOrder" class="flex items-center gap-3">
+          <span class="text-lg font-semibold text-foreground">Total de la commande:</span>
+          <span class="text-2xl font-bold text-primary" x-text="grandTotalFormatted + ' FCFA'">0.00 FCFA</span>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" @click="location.reload()" class="bg-background hover:bg-secondary hover:cursor-pointer text-foreground py-2 px-3 flex items-center rounded-md">
+            <span class="material-icons md-32">refresh</span>
+            Réinitialiser la page
+          </button>
+          <button type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-vertically-centered-modal" data-hs-overlay="#hs-vertically-centered-modal" :disabled="!canCreateOrder" class="bg-primary hover:bg-primary/80 disabled:bg-primary/60 disabled:cursor-none hover:cursor-pointer text-primary-foreground py-2 px-3 flex items-center rounded-xl drop-shadow-xl">
+            <span class="material-icons md-32">check</span>
+            Terminer la commande
+          </button>
+        </div>
+    </div>
+
+
+
+
+    <div id="hs-vertically-centered-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="hs-vertically-centered-modal-label">
+      <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-xl sm:w-full m-3 sm:mx-auto min-h-[calc(100%-56px)] flex items-center">
+        <div class="w-full flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl pointer-events-auto dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-neutral-700/70">
+          <div class="flex justify-between items-center py-3 px-4 border-b border-gray-200 dark:border-neutral-700">
+            <h3 id="hs-vertically-centered-modal-label" class="font-bold text-gray-800 dark:text-white">
+              Terminer la commande
+            </h3>
+            <button type="button" class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600" aria-label="Close" data-hs-overlay="#hs-vertically-centered-modal">
+              <span class="sr-only">Close</span>
+              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
+          <form method="POST" action="{% url 'order:create_order' %}" @submit="isSubmitting = true">
+              {% csrf_token %}
+              <div class="p-4 overflow-y-auto">
+                <div>
+                  {{form.json_repr}}
+                  <div class="grid sm:grid-cols-12 gap-2 items-center sm:gap-6">
+                    {% for field in form %}
+                      {% if field.name != 'json_repr' %}
+                        <div class="sm:col-span-3">
+                          <label for="{{ field.auto_id }}" class="inline-block text-sm text-gray-800 mt-2.5 dark:text-neutral-200">
+                            {{ field.label }}
+                          </label>
+                        </div>
+          
+                        <div class="sm:col-span-9">
+                          {{field}}
+                          {% if field.errors %}
+                            <div class="text-red-500 text-xs mt-1">
+                              {{ field.errors }}
+                            </div>
+                          {% endif %}
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                </div>
+              </div>
+              <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t border-gray-200 dark:border-neutral-700">
+                <button type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" data-hs-overlay="#hs-vertically-centered-modal" :disabled="isSubmitting">
+                  Fermer
+                </button>
+                <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary text-primary-foreground hover:bg-primary/80 focus:outline-hidden focus:bg-primary/80 disabled:opacity-50 disabled:pointer-events-none" :disabled="isSubmitting">
+                  <span x-show="!isSubmitting">Enregistrer la commande</span>
+                  <span x-show="isSubmitting" class="flex items-center gap-2">
+                    <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Enregistrement...
+                  </span>
+                </button>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
+    
+    
+    
+        
+    
+      
+    
+      
+    
+      </div>
+
+  <!-- End Invoice -->
+
+
+</div>
+
+

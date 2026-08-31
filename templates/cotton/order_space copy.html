@@ -1,0 +1,127 @@
+
+<div x-data="add_bill">
+<!-- Invoice -->
+
+  <div class=" mx-auto">
+    <!-- Grid -->
+    <div class="mb-5 flex justify-between items-center">
+     
+    <div>
+        <h1 class="text-2xl text-foreground">Créer une commande</h1>
+        <small class="text-base text-secondary-foreground/80 italic">Créez votre commande en ajoutant des articles depuis le formulaire ci-dessous puis validez votre commande</small>
+    </div>
+      <!-- Col -->
+  
+      <!-- <div class="inline-flex gap-x-2">
+        <button hx-get="" hx-target="#add-client-id" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-50" aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-vertically-centered-modal" data-hs-overlay="#hs-vertically-centered-modal">
+          <span class="material-icons">add</span>
+          Article
+        </button>
+        <button hx-get="" hx-target="#add-client-id" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 shadow-2xs hover:bg-destructive/80 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden bg-destructive text-destructive-foreground focus:bg-destructive/80" aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-vertically-centered-modal" data-hs-overlay="#hs-vertically-centered-modal">
+          <span class="material-icons">cancel</span>
+          Annuler
+        </button>
+      </div> -->
+      <!-- Col -->
+    </div>
+    <!-- End Grid -->
+
+    <div class="border border-secondary-foreground rounded-xl mt-10">
+        <!-- <h4>Ajouter une ligne à la commande</h4> -->
+         <div class="grid grid-cols-[1fr_1fr_1fr_70px] p-1">
+          <c-order-floating-input label="Article" class="border-r border-gray-300" />
+          <c-order-floating-input type="number" label="Qté" class="border-r border-gray-300" />
+          <c-order-floating-input type="number" label="Remise (%)" />
+          <button class="bg-primary hover:bg-primary/80 hover:cursor-pointer text-primary-foreground rounded-xl drop-shadow-xl"><span class="material-icons md-32">add</span></button>
+         </div>
+    </div>
+
+    <div class="mt-5">
+      <h5 class="text-lg">Ma commande</h5>
+    </div>
+  
+
+  
+    <!-- Table -->
+    <div class="border-y border-secondary-foreground p-4 space-y-4 dark:border-neutral-700">
+      <div class="hidden sm:grid sm:grid-cols-6">
+        <div class="sm:col-span-2 text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Désignation</div>
+        <div class="text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">PU</div>
+        <div class="text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Qté</div>
+        <div class="text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Remise (en %)</div>
+        <div class="text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Total</div>
+      </div>
+
+      <div x-sort="handle">
+
+        <template x-for="(estimate, index) in estimates">
+  
+          <div>
+            <!-- Line -->
+            <div class="hidden sm:block border-b border-gray-200 dark:border-neutral-700"></div>
+        
+            <div x-sort:item="index" @click="selectRow(index)" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-2 relative group">
+        
+              <div class="absolute -left-10 flex gap-1 items-center group-hover:opacity-100 opacity-0 transition-opacity duration-300">
+                <button class="hover:cursor-pointer text-gray-400 hover:text-gray-300">
+                  <span class="material-icons ">drag_indicator</span>
+                </button>
+              </div>
+  
+              <div class="col-span-full sm:col-span-2">
+                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Item</h5>
+                <div class="relative">
+                  <textarea :value="estimate.designation" @input="updateCurrentInput" @focus="setCurrentInput(index, 'designation')" class="peer py-2.5 sm:py-3 pe-0 block w-full bg-transparent border-t-transparent  border-x-transparent border-b-gray-200 sm:text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-blue-500 focus:ring-0 focus:ring-transparent disabled:opacity-50 disabled:pointer-events-none dark:border-b-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 dark:focus:border-b-neutral-600" placeholder="Designation" rows="1"></textarea>
+                </div>
+              </div>
+              <div>
+                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Qty</h5>
+                <div class="relative">
+                  <input :value="estimate.qty" @input="updateCurrentInput" @focus="setCurrentInput(index, 'qty')" class="peer py-2.5 sm:py-3 pe-0 block w-full bg-transparent border-t-transparent  border-x-transparent border-b-gray-200 sm:text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-blue-500 focus:ring-0 focus:ring-transparent disabled:opacity-50 disabled:pointer-events-none dark:border-b-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 dark:focus:border-b-neutral-600" placeholder="Qté" type="number">
+                </div>
+              </div>
+              <div>
+                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">PU</h5>
+                <div class="relative">
+                  <input :value="estimate.pu" @input="updateCurrentInput" @focus="setCurrentInput(index, 'pu')" class="peer py-2.5 sm:py-3 pe-0 block w-full bg-transparent border-t-transparent  border-x-transparent border-b-gray-200 sm:text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-blue-500 focus:ring-0 focus:ring-transparent disabled:opacity-50 disabled:pointer-events-none dark:border-b-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 dark:focus:border-b-neutral-600" placeholder="Qté" type="number">
+                </div>
+              </div>
+              <div>
+                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">discount</h5>
+                <div class="relative">
+                  <input :value="estimate.discount" @input="updateCurrentInput" @focus="setCurrentInput(index, 'discount')" class="peer py-2.5 sm:py-3 pe-0 block w-full bg-transparent border-t-transparent  border-x-transparent border-b-gray-200 sm:text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-blue-500 focus:ring-0 focus:ring-transparent disabled:opacity-50 disabled:pointer-events-none dark:border-b-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 dark:focus:border-b-neutral-600" placeholder="Remise" type="number">
+                </div>
+              </div>
+              <div>
+                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Amount</h5>
+                <p class="sm:text-end text-gray-800 dark:text-neutral-200" x-text="estimate.total">$2000</p>
+              </div>
+        
+              <div class="absolute -right-14 flex gap-1 items-center">
+                <button @click.prevent.stop="addRow(index)" class="flex items-center justify-center p-1 border border-gray-300 rounded-md hover:cursor-pointer hover:bg-gray-100" title="ajouter une ligne en dessous">
+                  <span class="material-icons text-gray-500 md-18">add</span>
+                </button>
+                <button x-show="estimates.length > 1" @click.prevent.stop="deleteRow(index)" class="flex items-center justify-center p-1 border border-red-300 rounded-md hover:cursor-pointer hover:bg-red-100" title="supprimer la ligne">
+                  <span class="material-icons text-red-500 md-18">delete</span>
+                </button>
+              </div>
+            </div>
+            <!-- End line -->
+          </div>
+        </template>
+      </div>
+      
+
+    </div>
+    <!-- End Table -->
+  
+
+  </div>
+  <!-- End Invoice -->
+
+
+<div id="hs-vertically-centered-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="hs-vertically-centered-modal-label">
+  <div id="add-client-id" class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto min-h-[calc(100%-56px)] flex items-center"></div>
+</div>
+
+</div>

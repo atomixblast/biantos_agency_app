@@ -1,0 +1,111 @@
+
+╔══════════════════════════════════════════════════════════╗
+║                                                          ║
+║           📋 GUIDE DE TEST - BIANTOS AGENCY             ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝
+
+🧪 COMMENT TESTER LE PACKAGE
+═════════════════════════════
+
+1. PRÉPARATION
+   ────────────
+   ✓ Extraire le ZIP dans un dossier de test
+   ✓ S'assurer que Python 3.10+ est installé
+   ✓ Fermer toutes les instances de l'application
+
+2. INSTALLATION
+   ────────────
+   ✓ Double-cliquer sur install_windows.bat
+   ✓ Vérifier qu'il n'y a pas d'erreurs
+   ✓ Créer un compte administrateur quand demandé
+   ✓ Noter le temps d'installation
+
+3. PREMIER DÉMARRAGE
+   ─────────────────
+   ✓ Double-cliquer sur start_biantos.bat
+   ✓ Vérifier que le navigateur s'ouvre
+   ✓ Vérifier l'accès à http://127.0.0.1:8000
+   ✓ Se connecter avec le compte créé
+
+4. TESTS FONCTIONNELS
+   ──────────────────
+   ✓ Créer un article avec photo
+   ✓ Créer un client avec photo
+   ✓ Créer un apporteur d'affaires avec photo
+   ✓ Créer une commande
+   ✓ Ajouter un paiement
+   ✓ Générer une facture
+   ✓ Consulter le calendrier
+   ✓ Voir les rapports
+
+5. ARRÊT
+   ─────
+   ✓ Appuyer sur CTRL+C dans la console
+   ✓ OU double-cliquer sur stop_biantos.bat
+   ✓ Vérifier que le serveur s'arrête proprement
+
+6. REDÉMARRAGE
+   ───────────
+   ✓ Relancer avec start_biantos.bat
+   ✓ Vérifier que les données sont conservées
+   ✓ Vérifier que les photos sont toujours là
+
+7. DÉSINSTALLATION (OPTIONNEL)
+   ───────────────────────────
+   ✓ Double-cliquer sur uninstall_biantos.bat
+   ✓ Vérifier que venv/ est supprimé
+   ✓ Vérifier que db.sqlite3 et media/ sont conservés
+
+═══════════════════════════════════════════════════════════
+
+✅ CHECKLIST DE VALIDATION
+═══════════════════════════
+
+Installation :
+□ Pas d'erreurs pendant l'installation
+□ Environnement virtuel créé (venv/)
+□ Dépendances installées
+□ Base de données créée
+□ Fichiers de démarrage générés
+
+Fonctionnement :
+□ Serveur démarre sans erreur
+□ Navigateur s'ouvre automatiquement
+□ Interface accessible
+□ Connexion fonctionne
+□ Upload de photos fonctionne
+□ Création de commandes fonctionne
+□ Génération de factures fonctionne
+
+Performance :
+□ Temps de démarrage < 10 secondes
+□ Interface réactive
+□ Pas de lenteur notable
+
+Stabilité :
+□ Pas de crash pendant l'utilisation
+□ Données conservées après redémarrage
+□ Arrêt propre du serveur
+
+═══════════════════════════════════════════════════════════
+
+📝 NOTES DE TEST
+════════════════
+
+Date du test : _________________
+Testeur : _____________________
+Version Windows : ______________
+Version Python : _______________
+
+Problèmes rencontrés :
+_______________________________
+_______________________________
+_______________________________
+
+Suggestions d'amélioration :
+_______________________________
+_______________________________
+_______________________________
+
+═══════════════════════════════════════════════════════════

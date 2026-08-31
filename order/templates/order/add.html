@@ -1,0 +1,21 @@
+{% extends base %}
+{% load static %}
+
+
+{% block content %}
+<div class="mx-auto mt-10 h-[80vh] max-w-[60rem] relative bg-card">
+
+
+    <div class="grid grid-cols-[1fr]">
+        <div class="pr-5">
+            <c-order-space />
+        </div>
+    </div>
+  
+</div>
+{% endblock %}
+
+{% block script %}
+{{ articles|json_script:"articles-data" }}
+<script src="{% static 'order/js/add_order.js' %}"></script>
+{% endblock %}

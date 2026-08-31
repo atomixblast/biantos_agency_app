@@ -1,0 +1,49 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
+    <script src="{% static 'js/preline.js' %}"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="{% static 'js/alpine_focus.min.js' %}"></script>
+    <script defer src="{% static 'js/alpine.min.js' %}"></script>
+    <script defer src="{% static 'js/htmx.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'css/material_icons.css' %}">
+    <title>Biantos Manager</title>
+    {% block script %}{% endblock %}
+</head>
+<body>
+
+
+
+    <!-- Sidebar -->
+    {% include "partials/sidebar.html" %}
+    <!-- End Sidebar -->
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="md:ps-65 md:hs-overlay-minified:ps-13 transition-all duration-300 pb-4 min-h-screen flex flex-col bg-background">
+  <!-- ========== HEADER ========== -->
+  {% include "partials/header.html" %}
+  <!-- ========== END HEADER ========== -->
+
+  <div class="min-h-screen mt-12 w-full mx-auto px-4 sm:px-6">
+    
+    <!-- ========== CONTENT ========== -->
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  
+</main>
+<!-- ========== END MAIN CONTENT ========== -->
+
+        <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.plugin(focus)
+        })
+        </script>
+</body>
+</html>

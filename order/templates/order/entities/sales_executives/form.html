@@ -1,0 +1,99 @@
+{% extends base %}
+
+{% block content %}
+<div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto max-w-2xl">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+      {% if action == 'create' %}
+        🤝 Nouvel Apporteur d'Affaire
+      {% else %}
+        ✏️ Modifier l'Apporteur d'Affaire
+      {% endif %}
+    </h1>
+    <p class="text-sm text-gray-600 dark:text-neutral-400 mt-1">
+      {% if action == 'create' %}
+        Ajoutez un nouveau partenaire commercial
+      {% else %}
+        Modifiez les informations de l'apporteur
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 dark:bg-neutral-900 dark:border-neutral-700">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div class="space-y-4">
+        <!-- Nom -->
+        <div>
+          <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.name.label }} <span class="text-red-500">*</span>
+          </label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.name.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Téléphone -->
+        <div>
+          <label for="{{ form.tel.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.tel.label }} <span class="text-red-500">*</span>
+          </label>
+          {{ form.tel }}
+          {% if form.tel.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.tel.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.email.label }}
+          </label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.email.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Photo -->
+        <div>
+          <label for="{{ form.photo.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.photo.label }}
+          </label>
+          {{ form.photo }}
+          {% if form.photo.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.photo.errors.0 }}</p>
+          {% endif %}
+          {% if sales_executive and sales_executive.photo %}
+            <p class="text-xs text-gray-500 mt-1">Photo actuelle : {{ sales_executive.photo.name }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex gap-x-2 mt-6">
+        <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+          {% if action == 'create' %}
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Créer l'apporteur
+          {% else %}
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            Enregistrer les modifications
+          {% endif %}
+        </button>
+        <a href="{% url 'order:list_sales_executives' %}" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700">
+          Annuler
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
