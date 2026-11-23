@@ -8,6 +8,7 @@ SECRET_KEY = 'django-insecure-*x=%lpmrs$l@(ihd2*me(x5dw&vu0nr5f847p@cg94($s4f!#y
 DEBUG = True
 
 ALLOWED_HOSTS = ['20.5.4.222', 'localhost', '127.0.0.1', '.wasmer.app']
+CSRF_TRUSTED_ORIGINS = ['https://biantos-agency-app-main.wasmer.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
     # Own apps
     'authentication',
     'order',
+    'target',
 ]
 
 MIDDLEWARE = [
