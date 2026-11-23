@@ -1,0 +1,37 @@
+kind: wasmer.io/App.v0
+name: biantos_agency_app-main
+app_id: da_RbxI9tgUj5GJ
+owner: gastel7
+package: .
+jobs:
+- name: after_deploy
+  trigger: post-deployment
+  action:
+    execute:
+      command: after_deploy
+annotations:
+  anybuild.run/config:
+    commands:
+      start: uvicorn biantos_agency.wsgi:application --interface=wsgi --host 0.0.0.0 --port $PORT
+    name: out
+    python_cross_platform: wasix_wasm32
+    python_extra_dependencies:
+    - uvicorn
+    python_extra_index_url: https://python-registry.wasix.org/simple
+    python_framework: django
+    python_install_inputs:
+    - requirements.txt
+    python_migration_strategy: django
+    python_server: uvicorn
+    wsgi_application: biantos_agency.wsgi:application
+    services:
+    - engine: mysql
+      name: database
+  anybuild.run/provider: python
+  anybuild.run/version: 0.33.3
+  wasmer.io/app-kind: django
+  wasmer.io/version: 7.5.0
+enableDatabase: true
+capabilities:
+  database:
+    engine: mysql
