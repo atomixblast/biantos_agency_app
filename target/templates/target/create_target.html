@@ -1,0 +1,112 @@
+{% extends base %}
+
+{% block content %}
+<div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto max-w-2xl">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-x-2">
+      <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
+          <span class="material-icons-outlined md-18">ads_click</span>
+      </span>
+      {% if action == 'create' %}
+        Nouvel objectif
+      {% else %}
+        Modifier l'objectif
+      {% endif %}
+    </h1>
+    <p class="text-sm text-gray-600 dark:text-neutral-400 mt-1">
+      {% if action == 'create' %}
+        Ajoutez un nouvel objectif à votre catalogue
+      {% else %}
+        Modifiez les informations de l'objectif
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 dark:bg-neutral-900 dark:border-neutral-700">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div class="space-y-4">
+        <!-- Nom -->
+        <div>
+          <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.name.label }} <span class="text-red-500">*</span>
+          </label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.name.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Quantité -->
+        <div>
+          <label for="{{ form.quantity.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.quantity.label }} <span class="text-red-500">*</span>
+          </label>
+          {{ form.quantity }}
+          {% if form.quantity.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.quantity.errors.0 }}</p>
+          {% endif %}
+          <p class="text-xs text-gray-500 mt-1">La quantité doit être un nombre positif</p>
+        </div>
+
+        <!-- Article -->
+        <div>
+          <label for="{{ form.article.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.article.label }} <span class="text-red-500">*</span>
+          </label>
+          {{ form.article }}
+          {% if form.article.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.article.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Date de début -->
+        <div>
+          <label for="{{ form.start_date.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.start_date.label }} <span class="text-red-500">*</span>
+          </label>
+          {{ form.start_date }}
+          {% if form.start_date.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.start_date.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Date de fin -->
+        <div>
+          <label for="{{ form.end_date.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.end_date.label }} <span class="text-red-500">*</span>
+          </label>
+          {{ form.end_date }}
+          {% if form.end_date.errors %}
+            <p class="text-sm text-red-600 mt-2">{{ form.end_date.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+
+      <!-- Buttons -->
+      <div class="flex gap-x-2 mt-6">
+        <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+          {% if action == 'create' %}
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Créer l'objectif
+          {% else %}
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            Enregistrer les modifications
+          {% endif %}
+        </button>
+        <a href="{% url 'target:list_targets' %}" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700">
+          Annuler
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
