@@ -97,10 +97,10 @@ echo color 0B
 echo title Biantos Agency - Serveur
 echo.
 echo ╔══════════════════════════════════════════════════════════╗
-echo ║                                                          ║
+echo  ║                                                         ║
 echo ║           🏢 BIANTOS AGENCY - Démarrage                 ║
-echo ║                                                          ║
-echo ╚══════════════════════════════════════════════════════════╝
+echo  ║                                                         ║
+echo ╚══════════════════════════════════════════════════════════╝ 
 echo.
 echo 🚀 Démarrage du serveur...
 echo 🌐 L'application sera accessible sur http://127.0.0.1:8000
