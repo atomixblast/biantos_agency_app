@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     # Own apps
     'authentication',
     'order',
+    'target',
 ]
 
 MIDDLEWARE = [
