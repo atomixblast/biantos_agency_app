@@ -89,3 +89,4 @@ __pycache__/
 db.sqlite3
 staticfiles/
 node_modules/
+!theme/static/css/dist/
