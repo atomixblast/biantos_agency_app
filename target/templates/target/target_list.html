@@ -128,7 +128,8 @@
     </div>
 
     <!-- Cartes -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <!-- Autant de colonnes que la largeur disponible le permet (cartes de 16rem min.) -->
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,16rem),1fr))] gap-4">
       {% for p in group.items %}
       {% with t=p.target %}
       <div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
