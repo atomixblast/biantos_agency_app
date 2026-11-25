@@ -28,7 +28,7 @@ annotations:
     - engine: mysql
       name: database
   anybuild.run/provider: python
-  anybuild.run/version: 0.33.3
+  anybuild.run/version: 0.34.0
   wasmer.io/app-kind: django
   wasmer.io/version: 7.5.0
 enableDatabase: true
