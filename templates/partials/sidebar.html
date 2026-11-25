@@ -54,9 +54,17 @@ md:block md:translate-x-0 md:end-auto md:bottom-0
       <!-- List -->
       <ul class="flex flex-col gap-y-0.5">
         <li>
+          <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="{% url 'target:list_targets' %}">
+            <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
+                {% icon "target" %}
+            </span>
+            <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Objectifs</span>
+          </a>
+        </li>
+        <li>
           <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="{% url 'order:list_orders' %}">
             <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons-outlined md-18">list</span>
+                {% icon "list" %}
             </span>
             <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Liste des commandes</span>
           </a>
@@ -64,7 +72,7 @@ md:block md:translate-x-0 md:end-auto md:bottom-0
         <li>
           <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="{% url 'order:create_order' %}">
             <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons md-18">add</span>
+                {% icon "file-plus" %}
             </span>
             <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Créer une commande</span>
           </a>
@@ -72,23 +80,15 @@ md:block md:translate-x-0 md:end-auto md:bottom-0
         <li>
           <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="{% url 'order:list_articles' %}">
             <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons-outlined md-18">inventory_2</span>
+                {% icon "package" %}
             </span>
             <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Articles</span>
           </a>
         </li>
         <li>
-          <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="{% url 'target:list_targets' %}">
-            <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons-outlined md-18">ads_click</span>
-            </span>
-            <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Objectifs</span>
-          </a>
-        </li>
-        <li>
           <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="{% url 'order:list_customers' %}">
             <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons-outlined md-18">group</span>
+                {% icon "users" %}
             </span>
             <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Clients</span>
           </a>
@@ -96,7 +96,7 @@ md:block md:translate-x-0 md:end-auto md:bottom-0
         <li>
           <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="{% url 'order:list_sales_executives' %}">
             <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons-outlined md-18">handshake</span>
+                {% icon "briefcase" %}
             </span>
             <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Apporteurs d'affaires</span>
           </a>
@@ -105,7 +105,7 @@ md:block md:translate-x-0 md:end-auto md:bottom-0
         <li>
           <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="index.html">
             <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons-outlined md-18">receipt</span>
+                {% icon "receipt" %}
             </span>
             <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Mes factures</span>
           </a>
@@ -113,7 +113,7 @@ md:block md:translate-x-0 md:end-auto md:bottom-0
         <li>
           <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="index.html">
             <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons-outlined md-18">group</span>
+                {% icon "users" %}
             </span>
             <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Nouveau client</span>
           </a>
@@ -121,7 +121,7 @@ md:block md:translate-x-0 md:end-auto md:bottom-0
         <li>
           <a class="group relative w-full flex items-center gap-1 py-1.5 px-2.5 relative text-sm text-gray-800 rounded-lg before:absolute before:inset-y-0 before:-start-2 before:rounded-e-full before:w-1 before:h-full hover:bg-gray-100/70 focus:outline-hidden focus:bg-gray-100/70 dark:hover:bg-neutral-700/50 dark:focus:bg-neutral-700/50 dark:text-neutral-200 " href="index.html">
             <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-                <span class="material-icons-outlined md-18">business</span>
+                {% icon "building" %}
             </span>
             <span class="truncate hs-overlay-minified:opacity-0 transition-opacity duration-300">Mon organisation</span>
           </a>

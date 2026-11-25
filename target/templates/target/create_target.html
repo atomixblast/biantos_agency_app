@@ -4,103 +4,131 @@
 <div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto max-w-2xl">
   <!-- Header -->
   <div class="mb-8">
-    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-x-2">
-      <span class="-ms-[5px] flex shrink-0 justify-center items-center size-6">
-          <span class="material-icons-outlined md-18">ads_click</span>
-      </span>
-      {% if action == 'create' %}
-        Nouvel objectif
-      {% else %}
-        Modifier l'objectif
-      {% endif %}
+    <a href="{% url 'target:list_targets' %}" class="inline-flex items-center gap-x-1 text-sm text-gray-500 hover:text-primary dark:text-neutral-400 mb-3">
+      {% icon "arrow-left" %}
+      Retour aux objectifs
+    </a>
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+      {% if action == 'create' %}Nouvel objectif{% else %}Modifier l'objectif{% endif %}
     </h1>
     <p class="text-sm text-gray-600 dark:text-neutral-400 mt-1">
-      {% if action == 'create' %}
-        Ajoutez un nouvel objectif à votre catalogue
-      {% else %}
-        Modifiez les informations de l'objectif
-      {% endif %}
+      Fixez une cible en quantité ou en chiffre d'affaires, pour l'agence ou pour un apporteur d'affaires.
     </p>
   </div>
 
   <!-- Form -->
-  <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 dark:bg-neutral-900 dark:border-neutral-700">
-    <form method="post" enctype="multipart/form-data">
+  <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 dark:bg-neutral-900 dark:border-neutral-700"
+       x-data="targetForm('{{ form.metric.value|default:'QUANTITY' }}')">
+    <form method="post" novalidate>
       {% csrf_token %}
-      
-      <div class="space-y-4">
+
+      {% if form.non_field_errors %}
+      <div class="p-3 mb-4 bg-red-50 border border-red-200 text-red-800 rounded-lg text-sm">
+        {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="space-y-5">
         <!-- Nom -->
         <div>
           <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
             {{ form.name.label }} <span class="text-red-500">*</span>
           </label>
           {{ form.name }}
-          {% if form.name.errors %}
-            <p class="text-sm text-red-600 mt-2">{{ form.name.errors.0 }}</p>
-          {% endif %}
+          {% if form.name.errors %}<p class="text-sm text-red-600 mt-2">{{ form.name.errors.0 }}</p>{% endif %}
         </div>
 
-        <!-- Quantité -->
+        <!-- Type -->
         <div>
-          <label for="{{ form.quantity.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
-            {{ form.quantity.label }} <span class="text-red-500">*</span>
+          <span class="block text-sm font-medium mb-2 dark:text-white">{{ form.metric.label }} <span class="text-red-500">*</span></span>
+          <div class="grid grid-cols-2 gap-3">
+            {% for radio in form.metric %}
+            <label for="{{ radio.id_for_label }}"
+                   class="flex items-center gap-x-3 p-3 border rounded-lg cursor-pointer transition-colors"
+                   :class="metric === '{{ radio.data.value }}' ? 'border-primary bg-primary/10' : 'border-gray-200 hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-800'">
+              {{ radio.tag }}
+              <span class="text-sm font-medium text-gray-800 dark:text-neutral-200">{{ radio.choice_label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+          {% if form.metric.errors %}<p class="text-sm text-red-600 mt-2">{{ form.metric.errors.0 }}</p>{% endif %}
+        </div>
+
+        <!-- Valeur cible -->
+        <div>
+          <label for="{{ form.target_value.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.target_value.label }} <span class="text-red-500">*</span>
           </label>
-          {{ form.quantity }}
-          {% if form.quantity.errors %}
-            <p class="text-sm text-red-600 mt-2">{{ form.quantity.errors.0 }}</p>
-          {% endif %}
-          <p class="text-xs text-gray-500 mt-1">La quantité doit être un nombre positif</p>
+          <div class="relative">
+            {{ form.target_value }}
+            <span class="absolute inset-y-0 end-0 flex items-center pe-4 text-sm text-gray-500 pointer-events-none"
+                  x-text="metric === 'QUANTITY' ? 'unités' : 'FCFA'"></span>
+          </div>
+          {% if form.target_value.errors %}<p class="text-sm text-red-600 mt-2">{{ form.target_value.errors.0 }}</p>{% endif %}
         </div>
 
         <!-- Article -->
         <div>
           <label for="{{ form.article.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
-            {{ form.article.label }} <span class="text-red-500">*</span>
+            {{ form.article.label }}
+            <span x-show="metric === 'QUANTITY'" class="text-red-500">*</span>
           </label>
           {{ form.article }}
-          {% if form.article.errors %}
-            <p class="text-sm text-red-600 mt-2">{{ form.article.errors.0 }}</p>
-          {% endif %}
+          <p x-show="metric === 'REVENUE'" class="text-xs text-gray-500 mt-1">
+            Laissez vide pour un objectif de chiffre d'affaires sur tous les articles.
+          </p>
+          {% if form.article.errors %}<p class="text-sm text-red-600 mt-2">{{ form.article.errors.0 }}</p>{% endif %}
         </div>
 
-        <!-- Date de début -->
+        <!-- Attribution -->
         <div>
-          <label for="{{ form.start_date.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
-            {{ form.start_date.label }} <span class="text-red-500">*</span>
+          <label for="{{ form.sales_executive.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.sales_executive.label }}
           </label>
-          {{ form.start_date }}
-          {% if form.start_date.errors %}
-            <p class="text-sm text-red-600 mt-2">{{ form.start_date.errors.0 }}</p>
-          {% endif %}
+          {{ form.sales_executive }}
+          <p class="text-xs text-gray-500 mt-1">Seules les commandes de cet apporteur seront comptées.</p>
+          {% if form.sales_executive.errors %}<p class="text-sm text-red-600 mt-2">{{ form.sales_executive.errors.0 }}</p>{% endif %}
         </div>
 
-        <!-- Date de fin -->
+        <!-- Période -->
         <div>
-          <label for="{{ form.end_date.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
-            {{ form.end_date.label }} <span class="text-red-500">*</span>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="block text-sm font-medium dark:text-white">Période <span class="text-red-500">*</span></span>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" @click="setPeriod('month')" class="py-1 px-2.5 text-xs font-medium rounded-full border border-gray-200 text-gray-700 hover:border-primary hover:text-primary dark:border-neutral-700 dark:text-neutral-300">Ce mois</button>
+              <button type="button" @click="setPeriod('next_month')" class="py-1 px-2.5 text-xs font-medium rounded-full border border-gray-200 text-gray-700 hover:border-primary hover:text-primary dark:border-neutral-700 dark:text-neutral-300">Mois prochain</button>
+              <button type="button" @click="setPeriod('quarter')" class="py-1 px-2.5 text-xs font-medium rounded-full border border-gray-200 text-gray-700 hover:border-primary hover:text-primary dark:border-neutral-700 dark:text-neutral-300">Ce trimestre</button>
+              <button type="button" @click="setPeriod('year')" class="py-1 px-2.5 text-xs font-medium rounded-full border border-gray-200 text-gray-700 hover:border-primary hover:text-primary dark:border-neutral-700 dark:text-neutral-300">Cette année</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="{{ form.start_date.id_for_label }}" class="block text-xs text-gray-500 mb-1">{{ form.start_date.label }}</label>
+              {{ form.start_date }}
+              {% if form.start_date.errors %}<p class="text-sm text-red-600 mt-2">{{ form.start_date.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+              <label for="{{ form.end_date.id_for_label }}" class="block text-xs text-gray-500 mb-1">{{ form.end_date.label }}</label>
+              {{ form.end_date }}
+              {% if form.end_date.errors %}<p class="text-sm text-red-600 mt-2">{{ form.end_date.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">
+            {{ form.description.label }}
           </label>
-          {{ form.end_date }}
-          {% if form.end_date.errors %}
-            <p class="text-sm text-red-600 mt-2">{{ form.end_date.errors.0 }}</p>
-          {% endif %}
+          {{ form.description }}
         </div>
       </div>
-
 
       <!-- Buttons -->
       <div class="flex gap-x-2 mt-6">
         <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
-          {% if action == 'create' %}
-            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Créer l'objectif
-          {% else %}
-            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            Enregistrer les modifications
-          {% endif %}
+          {% if action == 'create' %}{% icon "plus" %}{% else %}{% icon "check" %}{% endif %}
+          {% if action == 'create' %}Créer l'objectif{% else %}Enregistrer les modifications{% endif %}
         </button>
         <a href="{% url 'target:list_targets' %}" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700">
           Annuler
@@ -109,4 +137,34 @@
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('targetForm', (initialMetric) => ({
+    metric: initialMetric,
+
+    setPeriod(kind) {
+      const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      let start, end;
+      if (kind === 'month') {
+        start = new Date(y, m, 1); end = new Date(y, m + 1, 0);
+      } else if (kind === 'next_month') {
+        start = new Date(y, m + 1, 1); end = new Date(y, m + 2, 0);
+      } else if (kind === 'quarter') {
+        const q = Math.floor(m / 3) * 3;
+        start = new Date(y, q, 1); end = new Date(y, q + 3, 0);
+      } else {
+        start = new Date(y, 0, 1); end = new Date(y, 11, 31);
+      }
+      this.$refs.start.value = fmt(start);
+      this.$refs.end.value = fmt(end);
+    },
+  }));
+});
+</script>
 {% endblock %}

@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     # Own apps
     'authentication',
     'order',
+    'target',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 "biantos_agency.configs.context_processors.base_template",
             ],
+            'builtins': ['theme.templatetags.icons'],
         },
     },
 ]
@@ -107,7 +109,7 @@ TAILWIND_APP_NAME = 'theme'
 AUTH_USER_MODEL = 'authentication.User'
 
 LOGIN_URL = '/auth/login/'
-LOGIN_REDIRECT_URL = '/order/list_orders/'
+LOGIN_REDIRECT_URL = '/target/'
 LOGOUT_REDIRECT_URL = '/auth/login/'
 
 MEDIA_URL = '/media/'

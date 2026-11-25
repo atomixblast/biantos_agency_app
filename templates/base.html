@@ -11,7 +11,6 @@
     <script defer src="{% static 'js/alpine.min.js' %}"></script>
     <script defer src="{% static 'js/htmx.min.js' %}"></script>
 
-    <link rel="stylesheet" href="{% static 'css/material_icons.css' %}">
     <title>Biantos Manager</title>
     {% block script %}{% endblock %}
 </head>
@@ -32,6 +31,7 @@
   <div class="min-h-screen mt-12 w-full mx-auto px-4 sm:px-6">
     
     <!-- ========== CONTENT ========== -->
+    {% include "partials/messages.html" %}
     {% block content %}
     {% endblock %}
   </div>

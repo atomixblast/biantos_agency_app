@@ -13,6 +13,7 @@ document.addEventListener('alpine:init', () => {
         tva: 0,
         ca: 0,
         discount: 0,
+        discountType: 'PERCENT',
 
         mode: 'pending', 
         isSubmitting: false,
@@ -46,6 +47,16 @@ document.addEventListener('alpine:init', () => {
             this.qtyField = document.getElementById('add_qty_field')
             this.discountField = document.getElementById('add_discount_field')
             this.articleReprField = document.getElementById('id_json_repr')
+
+            // Remise sur la commande : valeur initiale fournie par le serveur
+            const globalDiscountField = document.getElementById('id_global_discount')
+            if (globalDiscountField) {
+                this.discount = parseFloat(globalDiscountField.value) || 0
+            }
+            const globalDiscountTypeField = document.getElementById('id_global_discount_type')
+            if (globalDiscountTypeField) {
+                this.discountType = globalDiscountTypeField.value || 'PERCENT'
+            }
 
             // Load articles from database
             if(document.getElementById('articles-data')){
@@ -127,7 +138,7 @@ document.addEventListener('alpine:init', () => {
                 
                 if (existingArticleIndex !== -1) {
                     // Article exists - show warning and don't add
-                    this.showWarningMessage(`⚠️ "${article.designation}" est déjà dans la commande. Supprimez-le d'abord pour le modifier.`)
+                    this.showWarningMessage(`"${article.designation}" est déjà dans la commande. Supprimez-le d'abord pour le modifier.`)
                     return // Don't add or update
                 }
                 
@@ -171,8 +182,30 @@ document.addEventListener('alpine:init', () => {
             return this.orderArticles.length
         },
 
-        get grandTotal(){
+        // Total après remises par article
+        get linesTotal(){
             return this.orderArticles.reduce((sum, article) => sum + article.total, 0)
+        },
+
+        // Remise sur toute la commande, appliquée après les remises par article :
+        // en % du total des articles, ou en montant FCFA (plafonné au total).
+        get globalDiscountAmount(){
+            const value = Math.max(parseFloat(this.discount) || 0, 0)
+            if (this.discountType === 'AMOUNT') {
+                return Math.min(value, this.linesTotal)
+            }
+            return this.linesTotal * Math.min(value, 100) / 100
+        },
+
+        get globalDiscountLabel(){
+            if (this.discountType === 'AMOUNT') {
+                return 'Remise sur la commande'
+            }
+            return 'Remise sur la commande (' + (parseFloat(this.discount) || 0) + ' %)'
+        },
+
+        get grandTotal(){
+            return this.linesTotal - this.globalDiscountAmount
         },
 
         get grandTotalFormatted(){

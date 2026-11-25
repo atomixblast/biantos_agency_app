@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from authentication.models import User
@@ -63,7 +64,24 @@ class Order(models.Model):
     state = models.CharField(max_length=255, choices=STATES)
     description = models.TextField(blank=True, null=True)
     total = models.FloatField(default=0.0)
+    # Montant total des remises (remises par article + remise sur la commande).
     discount = models.FloatField(default=0.0)
+    # Remise appliquée sur toute la commande, en plus des remises par article :
+    # soit un pourcentage, soit un montant en FCFA (voir global_discount_type).
+    DISCOUNT_PERCENT = 'PERCENT'
+    DISCOUNT_AMOUNT = 'AMOUNT'
+    DISCOUNT_TYPES = (
+        (DISCOUNT_PERCENT, '%'),
+        (DISCOUNT_AMOUNT, 'FCFA'),
+    )
+    global_discount = models.FloatField(
+        default=0.0,
+        validators=[MinValueValidator(0)],
+        help_text="Remise sur toute la commande (en % ou en FCFA selon le type)",
+    )
+    global_discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPES, default=DISCOUNT_PERCENT)
+    # Montant (FCFA) effectivement déduit par la remise sur la commande.
+    global_discount_amount = models.FloatField(default=0.0)
     cashed = models.FloatField(default=0.0)
     json_repr = models.JSONField()
 
@@ -83,6 +101,24 @@ class Order(models.Model):
     
     def get_total_with_discount(self):
         return self.total
+
+    def get_lines_discount(self):
+        """Montant des remises par article."""
+        return round(sum(line.discount_amount for line in self.articleorder_set.all()), 2)
+
+    def get_global_discount_amount(self):
+        """Montant de la remise sur la commande."""
+        return self.global_discount_amount
+
+    def get_lines_discount_amount(self):
+        """Montant des remises par article, sans requête (déduit des champs stockés)."""
+        return round(self.discount - self.global_discount_amount, 2)
+
+    def get_global_discount_label(self):
+        """Libellé de la remise sur la commande, ex. « Remise sur la commande (5 %) »."""
+        if self.global_discount_type == self.DISCOUNT_PERCENT:
+            return f"Remise sur la commande ({self.global_discount:g} %)"
+        return "Remise sur la commande"
     
     def get_total_paid(self):
         """Retourne le total des paiements effectués"""
@@ -122,8 +158,30 @@ class Order(models.Model):
 class ArticleOrder(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    discount = models.FloatField(default=0.0)
+    discount = models.FloatField(default=0.0, help_text="Remise de la ligne, en %")
     qty = models.PositiveIntegerField(default=0)
+    # Prix figé au moment de la commande : modifier le prix de l'article
+    # ne change pas les commandes déjà passées.
+    unit_price = models.FloatField(null=True, blank=True, help_text="Prix unitaire au moment de la commande")
+
+    def save(self, *args, **kwargs):
+        if self.unit_price is None:
+            self.unit_price = self.article.sale_price
+        super().save(*args, **kwargs)
+
+    @property
+    def subtotal(self):
+        """Montant brut de la ligne (avant remise)."""
+        return self.qty * self.unit_price
+
+    @property
+    def discount_amount(self):
+        return self.subtotal * self.discount / 100
+
+    @property
+    def total(self):
+        """Montant net de la ligne (après remise)."""
+        return self.subtotal - self.discount_amount
 
     def __str__(self):
         return f"{self.article.name} x{self.qty} - Commande #{self.order.id}"

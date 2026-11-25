@@ -2,16 +2,18 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.conf import settings
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import LoginForm
 
 
 def login_view(request):
     """Vue de connexion"""
-    # Si l'utilisateur est déjà connecté, rediriger vers la liste des commandes
+    # Si l'utilisateur est déjà connecté, rediriger vers la page d'accueil
     if request.user.is_authenticated:
-        return redirect('order:list_orders')
+        return redirect(settings.LOGIN_REDIRECT_URL)
     
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
@@ -37,7 +39,11 @@ def login_view(request):
                 messages.success(request, f"Bienvenue {user.username} !")
                 
                 # Rediriger vers la page demandée ou la liste des commandes
-                next_url = request.GET.get('next', 'order:list_orders')
+                # (on n'accepte qu'une URL interne, pour éviter les redirections externes)
+                next_url = request.GET.get('next')
+                if not next_url or not url_has_allowed_host_and_scheme(
+                        next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+                    next_url = settings.LOGIN_REDIRECT_URL
                 return redirect(next_url)
             else:
                 messages.error(request, "Email ou mot de passe incorrect.")

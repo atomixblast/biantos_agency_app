@@ -254,7 +254,7 @@
     </style>
 </head>
 <body>
-    <button class="print-button" onclick="window.print()">🖨️ Imprimer</button>
+    <button class="print-button" onclick="window.print()">Imprimer</button>
     
     <div class="invoice-container">
         <!-- Header -->
@@ -336,12 +336,20 @@
                     <td>Sous-total (sans remise)</td>
                     <td class="text-right"><strong>{{ total_without_discount|format_currency }} FCFA</strong></td>
                 </tr>
-                {% if order.discount > 0 %}
+                {% with lines_discount=order.get_lines_discount global_amount=order.get_global_discount_amount %}
+                {% if lines_discount > 0 %}
                 <tr>
-                    <td>Remise globale</td>
-                    <td class="text-right" style="color: #dc3545;"><strong>-{{ order.discount|format_currency }} FCFA</strong></td>
+                    <td>Remises sur articles</td>
+                    <td class="text-right" style="color: #dc3545;"><strong>-{{ lines_discount|format_currency }} FCFA</strong></td>
                 </tr>
                 {% endif %}
+                {% if global_amount > 0 %}
+                <tr>
+                    <td>{{ order.get_global_discount_label }}</td>
+                    <td class="text-right" style="color: #dc3545;"><strong>-{{ global_amount|format_currency }} FCFA</strong></td>
+                </tr>
+                {% endif %}
+                {% endwith %}
                 <tr class="total-row">
                     <td>TOTAL</td>
                     <td class="text-right"><strong>{{ order.total|format_currency }} FCFA</strong></td>

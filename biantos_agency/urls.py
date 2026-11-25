@@ -21,7 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', lambda request: redirect('authentication:login'), name='home'),
+    path('', lambda request: redirect('target:list_targets'), name='home'),  # accueil : objectifs
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
     path('order/', include('order.urls')),
